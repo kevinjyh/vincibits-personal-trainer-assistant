@@ -5,12 +5,7 @@ import logging
 from datetime import datetime
 
 load_dotenv()
-# openai.api_key = os.environ.get("OPENAI_API_KEY")
-# defaults to getting the key using os.environ.get("OPENAI_API_KEY")
-# if you saved the key under a different environment variable name, you can do something like:
-# client = OpenAI(
-#   api_key=os.environ.get("CUSTOM_ENV_NAME"),
-# )
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 client = openai.OpenAI()
 model = "gpt-3.5-turbo-16k"
@@ -26,7 +21,7 @@ model = "gpt-3.5-turbo-16k"
 # print(asistant_id)
 
 
-# === Thread (uncomment this to create your Thread) ===
+# # === Thread (uncomment this to create your Thread) ===
 # thread = client.beta.threads.create(
 #     messages=[
 #         {
