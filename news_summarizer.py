@@ -62,7 +62,7 @@ def get_news(topic):
 
 
 # %%
-get_news("bitcoin")[0]
+# get_news("bitcoin")[0]
 
 # %%
 class AssistantManager:
@@ -109,7 +109,7 @@ class AssistantManager:
     def add_message_to_thread(self, role, content):
         if self.thread:
             self.client.beta.threads.messages.create(
-                thread_id=self.thread.id,
+                thread_id=self.thread_id,
                 role=role,
                 content=content
             )
@@ -173,7 +173,7 @@ class AssistantManager:
     def get_summary(self):
         return self.summary
 
-    def wait_for_completed(self):
+    def wait_for_completion(self):
         if self.thread and self.run:
             while True:
                 time.sleep(5)
@@ -214,6 +214,50 @@ def main():
         instructions = st.text_input("Enter topic:")
         submit_button = st.form_submit_button(label="Run Assistant")
 
+    if submit_button:
+        manager.create_assistant(
+            name="News Summarizer",
+            instructions="你是一個個人文章摘要助手，知道如何從一系列文章和描述中撰寫所有新聞文章的簡短摘要。",
+            tools=[
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "get_news",
+                        "description": "Get the list of articles/news for the given topic",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "topic": {
+                                    "type": "string",
+                                    "description": "The topic of the news, e.g. bitcoin"
+                                }
+                            },
+                            "required": ["topic"],
+                        }
+                    }
+                }
+            ]
+        )
+        manager.create_thread()
+
+        # Add the message and run the assistant
+        manager.add_message_to_thread(
+            role="user",
+            content=f"summarize the news on this topic {instructions}?"
+        )
+        manager.run_assistant(instructions="Summarize the news")
+
+        # Wait for completions and process the message
+        manager.wait_for_completion()
+
+        summary = manager.get_summary()
+
+        st.write(summary)
+
+        st.text("Run Steps")
+        st.code(manager.run_steps(), line_numbers=True)
+
+        
 # %%
 if __name__ == "__main__":
     main()
