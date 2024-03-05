@@ -72,8 +72,8 @@ class AssistantManager:
     def __init__(self, model: str=model):
         self.client = client
         self.model = model
-        self.assistant = (None,)
-        self.thread = (None,)
+        self.assistant = None
+        self.thread = None
         self.run = None
         self.summary = None
 
@@ -109,9 +109,7 @@ class AssistantManager:
     def add_message_to_thread(self, role, content):
         if self.thread:
             self.client.beta.threads.messages.create(
-                thread_id=self.thread_id,
-                role=role,
-                content=content
+                thread_id=self.thread.id, role=role, content=content
             )
     
     def run_assistant(self, instructions):
@@ -163,7 +161,7 @@ class AssistantManager:
                 raise ValueError(f"Unknown function: {func_name}")
 
             print("Submitting outputs back to the Assistant...")
-            self.client.beta.threads.runs.submit_tools_outputs(
+            self.client.beta.threads.runs.submit_tool_outputs(
                 thread_id=self.thread.id,
                 run_id=self.run.id,
                 tool_outputs=tool_outputs
@@ -178,8 +176,7 @@ class AssistantManager:
             while True:
                 time.sleep(5)
                 run_status = self.client.beta.threads.runs.retrieve(
-                    thread_id=self.thread.id,
-                    run_id=self.run.id
+                    thread_id=self.thread.id, run_id=self.run.id
                 )
                 print(f"RUN STATUS:: {run_status.model_dump_json(indent=4)}")
 
@@ -189,7 +186,7 @@ class AssistantManager:
                 elif run_status.status == "requires_action":
                     print("FUNCTINS CALLING NOW...")
                     self.call_required_functions(
-                        required_actions=run_status.required_action.submit_tools_outputs.model_dump()
+                        required_actions=run_status.required_action.submit_tool_outputs.model_dump()
                     )
     
     # Run the steps
