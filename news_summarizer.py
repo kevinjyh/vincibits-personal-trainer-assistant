@@ -1,4 +1,4 @@
-# %%
+
 import openai
 from dotenv import find_dotenv, load_dotenv
 import time
@@ -13,11 +13,11 @@ load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 news_api_key = os.environ.get("NEWS_API_KEY")
 
-# %%
+
 client = openai.OpenAI()
 model = "gpt-3.5-turbo-16k"
 
-# %%
+
 def get_news(topic):
     url = (
         f"https://newsapi.org/v2/everything?q={topic}&apiKey={news_api_key}&pageSzie=5"
@@ -61,10 +61,6 @@ def get_news(topic):
         print("Error occured during API Request", e)
 
 
-# %%
-# get_news("bitcoin")[0]
-
-# %%
 class AssistantManager:
     thread_id = None
     assistant_id = None
@@ -197,7 +193,7 @@ class AssistantManager:
         )
         print(f"Run-Steps::: {run_steps}")
 
-# %%
+
 def main():
     # news = get_news("bitcoin")
     # print(news[0])
@@ -255,6 +251,6 @@ def main():
         st.code(manager.run_steps(), line_numbers=True)
 
         
-# %%
+
 if __name__ == "__main__":
     main()
