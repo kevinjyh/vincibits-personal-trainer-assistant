@@ -1,3 +1,4 @@
+# https://github.com/pdichone/vincibits-personal-trainer-assistant
 import openai
 from dotenv import find_dotenv, load_dotenv
 import time
